@@ -37,6 +37,7 @@ func (app *App) Post(path string, handler func(w http.ResponseWriter, req *http.
 }
 
 func (app *App) Listen(port int) {
+	app.Port = port
 	for _, route := range app.Routes {
 		http.HandleFunc(route.path, route.handler)
 	}
