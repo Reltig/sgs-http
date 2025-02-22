@@ -10,7 +10,7 @@ func main() {
 
 	app.Get("/hello", hello)
 
-	app.Listen(8000)
+	app.Listen(":8000")
 }
 
 func hello(w http.ResponseWriter, req *http.Request) {
