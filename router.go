@@ -23,6 +23,12 @@ func (rt *Router) addRoute(method string, path string, handler http.Handler) {
 	rt.routes = append(rt.routes, Route{method, path, handler})
 }
 
-func (rt *Router) resolvePath(path string) (http.Handler, error) {
+func (rt *Router) resolvePath(method string, path string) (http.Handler, error) {
+	for _, route := range rt.routes {
+		if route.method == method && route.path == path {
+			return route.handler, nil
+		}
+		// TODO: Method no allowed
+	}
 	return nil, ErrRouteNotFound
 }

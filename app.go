@@ -26,7 +26,7 @@ func (app *App) Patch(path string, handler http.HandlerFunc) {
 }
 
 func (app *App) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	handler, err := app.router.resolvePath(req.URL.Path)
+	handler, err := app.router.resolvePath(req.Method, req.URL.Path)
 	if err != nil {
 		http.NotFound(w, req)
 	} else {
