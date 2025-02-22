@@ -1,36 +1,43 @@
 package sgshttp
 
 import (
+	"context"
 	"net/http"
 )
 
 type App struct {
-	Port string
+	Port   string
 	router Router
 }
 
-func CreateApp() App {
-	return App{}
+func CreateApp() *App {
+	return &App{}
 }
 
-func (app *App) Get(path string, handler http.HandlerFunc) {
+func (app *App) Get(path string, handler RequestHandler) {
 	app.router.addRoute("GET", path, handler)
 }
 
-func (app *App) Post(path string, handler http.HandlerFunc) {
+func (app *App) Post(path string, handler RequestHandler) {
 	app.router.addRoute("POST", path, handler)
 }
 
-func (app *App) Patch(path string, handler http.HandlerFunc) {
+func (app *App) Patch(path string, handler RequestHandler) {
 	app.router.addRoute("PATCH", path, handler)
 }
 
+func (app *App) Delete(path string, handler RequestHandler) {
+	app.router.addRoute("DELETE", path, handler)
+}
+
 func (app *App) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	handler, err := app.router.resolvePath(req.Method, req.URL.Path)
+	reqHandler, err := app.router.resolvePath(req.Method, req.URL.Path)
 	if err != nil {
 		http.NotFound(w, req)
 	} else {
-		handler.ServeHTTP(w, req)
+		ctx := &RequestContext{w, req, context.Background()}
+		responseHandler := reqHandler(ctx).handler
+		responseHandler.ServeHTTP(ctx.w, ctx.req)
 	}
 }
 
