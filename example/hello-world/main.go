@@ -11,13 +11,13 @@ func main() {
 	app.Post("/hello/world", helloWorld)
 
 	app.Listen(":8000")
-	
+
 }
 
-func hello(ctx *sgs.RequestContext) sgs.Response {
+func hello(ctx *sgs.Context) sgs.Response {
 	return ctx.ResponseText("Hello")
 }
 
-func helloWorld(ctx *sgs.RequestContext) sgs.Response {
+func helloWorld(ctx *sgs.Context) sgs.Response {
 	return ctx.ResponseText("Hello world")
 }

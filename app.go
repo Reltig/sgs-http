@@ -7,27 +7,33 @@ import (
 
 type App struct {
 	Port   string
-	router Router
+	router *Router
 }
 
 func CreateApp() *App {
-	return &App{}
+	return &App{
+		router: CreateRouter("/"),
+	}
 }
 
 func (app *App) Get(path string, handler RequestHandler) {
-	app.router.addRoute("GET", path, handler)
+	app.router.Get(path, handler)
 }
 
 func (app *App) Post(path string, handler RequestHandler) {
-	app.router.addRoute("POST", path, handler)
+	app.router.Post(path, handler)
 }
 
 func (app *App) Patch(path string, handler RequestHandler) {
-	app.router.addRoute("PATCH", path, handler)
+	app.router.Patch(path, handler)
 }
 
 func (app *App) Delete(path string, handler RequestHandler) {
-	app.router.addRoute("DELETE", path, handler)
+	app.router.Delete(path, handler)
+}
+
+func (app *App) Mount(router *Router) {
+	app.router.Mount(router)
 }
 
 func (app *App) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -35,7 +41,7 @@ func (app *App) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		http.NotFound(w, req)
 	} else {
-		ctx := &RequestContext{w, req, context.Background()}
+		ctx := &Context{w, req, context.Background()}
 		responseHandler := reqHandler(ctx).handler
 		responseHandler.ServeHTTP(ctx.w, ctx.req)
 	}
